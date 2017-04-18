@@ -1,4 +1,4 @@
-require "./lib/oystercard.rb"
+require "./lib/oystercard"
 
 describe Oystercard do
 
