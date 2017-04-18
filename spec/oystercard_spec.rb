@@ -9,6 +9,9 @@ describe Oystercard do
     expect(subject).to respond_to :balance
   end
 
+  it 'has a blank history' do
+    expect(subject.history).to eq([])
+  end
 
   it 'begins at a balance of 0' do
     expect(subject.balance).to eq(0)
@@ -39,7 +42,7 @@ describe Oystercard do
   it 'changes the journey status to false' do
     subject.top_up(5)
     subject.touch_in(station)
-    expect{ subject.touch_out }.to change{ subject.in_journey? }.from(true).to(false)
+    expect{ subject.touch_out(station) }.to change{ subject.in_journey? }.from(true).to(false)
   end
 
 
@@ -50,7 +53,7 @@ describe Oystercard do
   it 'should deduct £1 on touching out' do
     subject.top_up(5)
     subject.touch_in(station)
-    expect{ subject.touch_out }.to change{ subject.balance }.from(5).to(4)
+    expect{ subject.touch_out(station) }.to change{ subject.balance }.from(5).to(4)
   end
 
   it 'should remember the station it touched in at' do
@@ -61,8 +64,14 @@ describe Oystercard do
   it "should set entry_station to nil at touch out" do
     subject.top_up(7)
     subject.touch_in(station)
-    expect{ subject.touch_out }.to change{ subject.entry_station }.to be_nil
+    expect{ subject.touch_out(station) }.to change{ subject.entry_station }.to be_nil
   end
 
+  it "should record one journey from Fulham to Aldgate" do
+    subject.top_up(7)
+    subject.touch_in("Fulham")
+    subject.touch_out("Aldgate")
+    expect(subject.history).to eq ["Fulham" => "Aldgate"]
+  end
 
 end
