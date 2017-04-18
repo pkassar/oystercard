@@ -35,12 +35,19 @@ describe Oystercard do
   end
 
   it 'changes the journey status to true' do
+    subject.top_up(5)
     expect{subject.touch_in}.to change{subject.in_journey?}.from(false).to(true)
   end
 
   it 'changes the journey status to false' do
+    subject.top_up(5)
     subject.touch_in
     expect{subject.touch_out}.to change{subject.in_journey?}.from(true).to(false)
+  end
+
+
+  it 'should raise an error if we deduct when balance is less than £1' do
+    expect{subject.touch_in}.to raise_error("Min balance is £#{Oystercard::MINIMUM_FARE}")
   end
 
 
