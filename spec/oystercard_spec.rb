@@ -1,6 +1,9 @@
 require "./lib/oystercard"
 
+
+
 describe Oystercard do
+  let(:station) {double}
 
   it 'has a balance' do
     expect(subject).to respond_to :balance
@@ -30,29 +33,36 @@ describe Oystercard do
 
   it 'changes the journey status to true' do
     subject.top_up(5)
-    expect{subject.touch_in(double)}.to change{subject.in_journey?}.from(false).to(true)
+    expect{subject.touch_in(station)}.to change{subject.in_journey?}.from(false).to(true)
   end
 
   it 'changes the journey status to false' do
     subject.top_up(5)
-    subject.touch_in(double)
-    expect{subject.touch_out}.to change{subject.in_journey?}.from(true).to(false)
+    subject.touch_in(station)
+    expect{ subject.touch_out }.to change{ subject.in_journey? }.from(true).to(false)
   end
 
 
   it 'should raise an error if we deduct when balance is less than £1' do
-    expect{subject.touch_in(double)}.to raise_error("Min balance is £#{Oystercard::MINIMUM_FARE}")
+    expect{ subject.touch_in(station) }.to raise_error("Min balance is £#{Oystercard::MINIMUM_FARE}")
   end
 
   it 'should deduct £1 on touching out' do
     subject.top_up(5)
-    subject.touch_in(double)
-    expect{subject.touch_out}.to change{subject.balance}.from(5).to(4)
+    subject.touch_in(station)
+    expect{ subject.touch_out }.to change{ subject.balance }.from(5).to(4)
   end
 
   it 'should remember the station it touched in at' do
     subject.top_up(5)
-    expect {subject.touch_in("Aldgate")}.to change{subject.station}.to "Aldgate"
+    expect { subject.touch_in("Aldgate") }.to change{ subject.entry_station }.to "Aldgate"
   end
+
+  it "should set entry_station to nil at touch out" do
+    subject.top_up(7)
+    subject.touch_in(station)
+    expect{ subject.touch_out }.to change{ subject.entry_station }.to be_nil
+  end
+
 
 end
