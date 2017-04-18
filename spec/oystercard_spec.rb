@@ -25,10 +25,23 @@ describe Oystercard do
     expect{ subject.top_up(100) }.to raise_error("card limit exceeded: Maximum Balance is £#{Oystercard::MAXIMUM_BALANCE}")
   end
 
-it 'subtracts 4 from the balance of 10' do
-  subject.top_up(10)
-  expect(subject.deduct(4)).to eq(6)
-end
+  it 'subtracts 4 from the balance of 10' do
+    subject.top_up(10)
+    expect(subject.deduct(4)).to eq(6)
+  end
+
+  it 'checks the journey status' do
+    expect(subject).to respond_to :in_journey?
+  end
+
+  it 'changes the journey status to true' do
+    expect{subject.touch_in}.to change{subject.in_journey?}.from(false).to(true)
+  end
+
+  it 'changes the journey status to false' do
+    subject.touch_in
+    expect{subject.touch_out}.to change{subject.in_journey?}.from(true).to(false)
+  end
 
 
 end
