@@ -1,6 +1,7 @@
-require "station"
+require "./lib/station"
+require "./lib/journey"
 
-class Oystercard
+class Oystercard < Journey
   attr_reader :balance, :entry_station, :history
   MAXIMUM_BALANCE = 90
   MINIMUM_FARE = 1
